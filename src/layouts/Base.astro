@@ -1,0 +1,7 @@
+---
+import '../styles/global.css';
+interface Props { title?: string; description?: string }
+const { title = 'Evan Han — Industrial Automation Developer', description = 'Software at the intersection of industrial equipment and clear, reliable interfaces.' } = Astro.props;
+---
+<!doctype html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><meta name="theme-color" content="#101b1a"/><link rel="icon" href="/favicon.svg" type="image/svg+xml"/><title>{title}</title></head><body><a class="skip" href="#main">Skip to content</a><header class="header"><a class="brand" href="/" aria-label="Evan Han home"><span class="brand-icon">EH<span>·</span></span><span>EVAN HAN<small>SOFTWARE / AUTOMATION</small></span></a><nav aria-label="Main navigation"><a href="/#work">Work</a><a href="/#approach">Approach</a><a href="/#notes">Notes</a><a class="nav-contact" href="https://github.com/EvanHan-dev">GitHub <span>↗</span></a></nav></header><main id="main"><slot /></main><footer><div><a class="brand" href="/"><span class="brand-icon">EH<span>·</span></span><span>EVAN HAN<small>SOFTWARE / AUTOMATION</small></span></a><p>Thoughtful software for the physical world.</p></div><div class="footer-end"><a href="https://github.com/EvanHan-dev">GitHub ↗</a><span>© {new Date().getFullYear()} EVAN HAN</span></div></footer></body></html>
+

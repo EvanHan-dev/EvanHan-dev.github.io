@@ -2,17 +2,18 @@
 import '../styles/portal.css';
 interface Props { title?: string; description?: string }
 const { title = 'EVAN DEVELOPERS', description = '산업 자동화 개발자를 위한 기술 문서와 개발 리소스' } = Astro.props;
-const nav = [['Docs','docs'],['Learn','learn'],['Tools','tools'],['Architecture','architecture'],['Projects','projects'],['Blog','blog']];
+const nav = [['Docs','docs'],['Learn','learn'],['Tools','tools'],['Architecture','architecture'],['Projects','projects'],['Blog','blog'],['Search','search']];
 ---
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><meta name="description" content={description}/><title>{title}</title><script is:inline>
 try { document.documentElement.dataset.theme = localStorage.getItem('portal-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch {}
 </script></head><body>
 <a class="portal-skip" href="#main">본문 바로가기</a>
-<header class="portal-header"><div class="portal-wrap header-inner"><a class="portal-brand" href="/"><span class="brand-mark">E</span> EVAN <span>Developers</span></a><nav aria-label="주 메뉴">{nav.map(([label,path])=><a href={'/portal/'+path+'/'} aria-current={Astro.url.pathname.startsWith('/portal/'+path+'/')?'page':undefined}>{label}</a>)}</nav><button id="theme-toggle" type="button" aria-label="테마 전환">◐</button></div></header>
+<header class="portal-header"><div class="portal-wrap header-inner"><a class="portal-brand" href="/"><span class="brand-mark">E</span> EVAN <span>Developers</span></a><nav aria-label="주 메뉴">{nav.map(([label,path])=><a href={'/portal/'+path+'/'} aria-current={Astro.url.pathname.startsWith('/portal/'+path+'/')?'page':undefined}>{label}</a>)}</nav><button id="theme-toggle" type="button" aria-label="테마 전환" aria-pressed="false">◐</button></div></header>
 <main id="main"><slot/></main>
 <footer class="portal-footer"><div class="portal-wrap footer-inner"><strong>EVAN DEVELOPERS</strong><span>Engineering knowledge, tools & resources.</span><a href="https://github.com/EvanHan-dev">GitHub ↗</a></div></footer>
 <script>
 const button = document.querySelector<HTMLButtonElement>('#theme-toggle');
-button?.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;try{localStorage.setItem('portal-theme',theme)}catch{}});
+button?.setAttribute('aria-pressed',String(document.documentElement.dataset.theme==='dark'));
+button?.addEventListener('click',()=>{const theme=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=theme;button?.setAttribute('aria-pressed',String(theme==='dark'));try{localStorage.setItem('portal-theme',theme)}catch{}});
 </script></body></html>

@@ -1,0 +1,33 @@
+---
+import Portal from '../../layouts/Portal.astro';
+import {searchEntries} from '../../data/knowledge';
+const tags=[...new Set(searchEntries.map(x=>x.tag))].sort();
+const types=[...new Set(searchEntries.map(x=>x.type))];
+---
+<Portal title="Search | EVAN DEVELOPERS">
+<div class="portal-wrap portal-inner-page">
+<div class="portal-kicker">DEVELOPER CENTER / SEARCH</div><h1>Search resources</h1><p>기술 문서, 도구, 학습 경로, 프로젝트 및 블로그를 한 곳에서 검색합니다.</p>
+<form id="search-form" role="search" class="search-fields">
+<label>검색어<input id="search-query" name="q" type="search" placeholder="C#, PLC, TCP/IP..." autocomplete="off"/></label>
+<label>콘텐츠 유형<select id="search-type"><option value="">All types</option>{types.map(t=><option value={t}>{t}</option>)}</select></label>
+<label>기술 태그<select id="search-tag"><option value="">All tags</option>{tags.map(t=><option value={t}>{t}</option>)}</select></label>
+</form>
+<p id="search-count" aria-live="polite">{searchEntries.length}개 리소스</p>
+<div id="search-results">{searchEntries.map(entry=><a class="portal-entry" data-entry data-type={entry.type} data-tag={entry.tag} data-keywords={entry.title+' '+entry.description+' '+entry.tag+' '+entry.type} href={entry.href}><div class="portal-kicker">{entry.type} / {entry.tag}</div><h3>{entry.title} →</h3><p>{entry.description}</p></a>)}</div>
+<p id="search-empty" hidden>검색 결과가 없습니다. 다른 키워드 또는 태그를 선택하세요.</p>
+<noscript><p>JavaScript가 비활성화되어 전체 리소스 목록만 표시합니다.</p></noscript>
+</div></Portal>
+<style>
+.search-fields{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:20px 0}.search-fields label{display:grid;gap:6px;font-size:14px;font-weight:650}.search-fields input,.search-fields select{width:100%;min-width:0;padding:12px;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;font:inherit}#search-results [hidden]{display:none}@media(max-width:650px){.search-fields{grid-template-columns:1fr}}
+</style>
+<script>
+import {matchesSearch} from '../../lib/search.mjs';
+const query=document.querySelector<HTMLInputElement>('#search-query')!;
+const type=document.querySelector<HTMLSelectElement>('#search-type')!;
+const tag=document.querySelector<HTMLSelectElement>('#search-tag')!;
+const entries=[...document.querySelectorAll<HTMLElement>('[data-entry]')];
+query.value=new URLSearchParams(location.search).get('q')||'';
+function filter(){let count=0;for(const entry of entries){const show=matchesSearch({keywords:entry.dataset.keywords||'',type:entry.dataset.type||'',tag:entry.dataset.tag||''},query.value,type.value,tag.value);entry.hidden=!show;if(show)count++}document.getElementById('search-count')!.textContent=count+'개 리소스';document.getElementById('search-empty')!.hidden=count!==0}
+document.getElementById('search-form')?.addEventListener('submit',e=>{e.preventDefault();filter()});
+query.addEventListener('input',filter);type.addEventListener('change',filter);tag.addEventListener('change',filter);filter();
+</script>

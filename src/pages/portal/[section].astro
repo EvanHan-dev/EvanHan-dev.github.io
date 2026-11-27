@@ -1,10 +1,24 @@
 ---
 import Portal from '../../layouts/Portal.astro';
-import {resources,topics,articles} from '../../data/portal';
+import {resources} from '../../data/portal';
+import {guides,learningPaths,layers,projects,blogEntries} from '../../data/knowledge';
 export function getStaticPaths(){return resources.filter(resource=>resource.slug!=='tools').map(resource=>({params:{section:resource.slug},props:{resource}}));}
 const {resource}=Astro.props;
-const slugs=['csharp','wpf','plc','network','architecture','database'];
+const tags=[...new Set(blogEntries.map(x=>x.tag))];
 ---
-<Portal title={resource.title+' | EVAN DEVELOPERS'}><div class="portal-wrap portal-inner-page"><a href="/">Developer Center</a> / {resource.title}<h1>{resource.title}</h1><p>{resource.description}</p>
-{resource.slug==='docs' ? <div class="portal-grid">{topics.map((t,i)=><a class="portal-card" id={'topic-'+i} href={'/portal/docs/'+slugs[i]+'/'}><span class="portal-symbol">{t.icon}</span><h3>{t.title}</h3><p>{t.description}</p><span class="portal-more">Read guide →</span></a>)}</div> : resource.slug==='blog' ? <div>{articles.map(a=><a class="portal-entry" href={a.href}><h3>{a.title} →</h3><p>{a.description}</p></a>)}</div> : <div class="portal-card"><h2>준비 중</h2><p>이 영역은 후속 개발 단계에서 콘텐츠와 기능을 추가할 예정입니다.</p><a href="/portal/docs/">기술 분야 탐색 →</a></div>}
+<Portal title={resource.title+' | EVAN DEVELOPERS'}>
+<div class="portal-wrap portal-inner-page">
+<a href="/">Developer Center</a> / {resource.title}<h1>{resource.title}</h1><p>{resource.description}</p>
+{resource.slug==='docs' && <div class="portal-grid">{guides.map((t,i)=><a class="portal-card" id={'topic-'+i} href={t.href}><span class="portal-symbol">{t.icon}</span><h3>{t.title}</h3><p>{t.description}</p><span class="portal-more">Read guide →</span></a>)}</div>}
+{resource.slug==='learn' && <div class="knowledge-stack">{learningPaths.map((path,i)=><section class="portal-card" id={'path-'+i}><div class="portal-kicker">{path.level}</div><h2>{path.title}</h2><p>{path.description}</p><ol>{path.steps.map(step=><li><a href={step.href}>{step.title}</a><p>{step.description}</p></li>)}</ol></section>)}</div>}
+{resource.slug==='architecture' && <><p>아래는 학습용 계층 모델입니다. 실제 설비의 안전 회로 및 제어 규격을 대체하지 않습니다.</p><div class="knowledge-stack architecture-stack">{layers.map((layer,i)=><section class="portal-card" id={'layer-'+i}><div class="portal-kicker">LAYER 0{i+1}</div><h2>{layer.title}</h2><p>{layer.description}</p><a href={layer.href}>Related guide →</a></section>)}</div><div class="portal-card"><h2>Design checklist</h2><ul><li>통신과 UI 실행 경로 분리</li><li>취소, 타임아웃과 명시적인 상태 전이</li><li>인터페이스를 이용한 모의 장비 테스트</li><li>구조화된 로그와 수동 복구 절차</li></ul></div></>}
+{resource.slug==='projects' && <div class="portal-grid">{projects.map((project,i)=><section class="portal-card" id={'project-'+i}><div class="portal-kicker">{project.status}</div><h3>{project.title}</h3><p>{project.description}</p><a class="portal-more" href={project.href}>Explore resource →</a></section>)}</div>}
+{resource.slug==='blog' && <><label for="blog-tag">기술 태그</label> <select id="blog-tag"><option value="">All topics</option>{tags.map(tag=><option value={tag}>{tag}</option>)}</select><div id="blog-list">{blogEntries.map(a=><a class="portal-entry" data-tag={a.tag} href={a.href}><div class="portal-kicker">{a.tag}</div><h3>{a.title} →</h3><p>{a.description}</p></a>)}</div></>}
 </div></Portal>
+<style>
+.knowledge-stack{display:grid;gap:16px;margin-bottom:24px}.knowledge-stack li{padding:8px 0}.knowledge-stack li p{margin:4px 0 0}.architecture-stack{max-width:760px}.architecture-stack section:not(:last-child){position:relative;margin-bottom:12px}.architecture-stack section:not(:last-child)::after{content:'↓';position:absolute;bottom:-31px;left:50%;color:var(--accent);font-size:20px}#blog-tag{color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 12px}#blog-list [hidden]{display:none}
+</style>
+<script>
+const tag=document.querySelector<HTMLSelectElement>('#blog-tag');
+tag?.addEventListener('change',()=>{document.querySelectorAll<HTMLElement>('#blog-list [data-tag]').forEach(item=>item.hidden=Boolean(tag.value&&item.dataset.tag!==tag.value))});
+</script>

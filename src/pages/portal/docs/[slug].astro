@@ -1,0 +1,21 @@
+---
+import Portal from '../../../layouts/Portal.astro';
+import {topics} from '../../../data/portal';
+export async function getStaticPaths(){
+  const files=import.meta.glob('../../../content/docs/*.md',{eager:true});
+  return Object.entries(files).map(([path,doc])=>({params:{slug:path.split('/').pop().replace('.md','')},props:{doc}}));
+}
+const {doc}=Astro.props;
+const {Content,frontmatter,getHeadings}=doc;
+const headings=getHeadings();
+const slugs=['csharp','wpf','plc','network','architecture','database'];
+---
+<Portal title={frontmatter.title+' | EVAN DEVELOPERS'}>
+<div class="portal-wrap doc-grid">
+<aside class="doc-side"><a href="/portal/docs/">← 전체 기술 문서</a><nav aria-label="기술 문서">{topics.map((t,i)=><a href={'/portal/docs/'+slugs[i]+'/'} aria-current={Astro.params.slug===slugs[i]?'page':undefined}>{t.title}</a>)}</nav></aside>
+<article class="doc-body"><div class="portal-kicker">DOCUMENTATION / STARTER GUIDE</div><h1>{frontmatter.title}</h1><p>{frontmatter.description}</p><p class="doc-notice">독립 학습용 개념 예제 · 실제 장비 적용 전 별도 검증 필요</p><Content/></article>
+<aside class="doc-toc"><strong>이 페이지의 목차</strong><nav aria-label="문서 목차">{headings.map(h=><a href={'#'+h.slug}>{h.text}</a>)}</nav></aside>
+</div></Portal>
+<style>
+.doc-grid{display:grid;grid-template-columns:210px minmax(0,1fr) 180px;gap:32px;padding-block:40px;align-items:start;min-height:70vh}.doc-side,.doc-toc{position:sticky;top:24px;font-size:14px}.doc-grid nav{display:grid;gap:8px;margin-top:16px}.doc-grid nav a{padding:8px 10px;border-radius:6px;color:var(--muted)}.doc-grid nav a[aria-current]{background:var(--soft);color:var(--accent);font-weight:700}.doc-body{min-width:0}.doc-body h1{font-size:clamp(30px,4vw,46px)}.doc-body :global(h2){font-size:24px;margin-top:36px;scroll-margin-top:24px}.doc-body :global(pre){padding:20px;border-radius:8px;overflow:auto;font-size:14px}.doc-notice{background:var(--soft);border-left:3px solid var(--accent);padding:12px}@media(max-width:950px){.doc-grid{grid-template-columns:180px minmax(0,1fr)}.doc-toc{grid-column:2;grid-row:1;position:static}.doc-body{grid-column:2}.doc-side{grid-row:1/3}}@media(max-width:650px){.doc-grid{display:flex;flex-direction:column;gap:20px}.doc-side,.doc-toc{position:static;width:100%}.doc-body{width:100%;order:2}.doc-grid nav{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>

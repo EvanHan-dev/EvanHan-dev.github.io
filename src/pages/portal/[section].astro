@@ -3,7 +3,8 @@ import Portal from '../../layouts/Portal.astro';
 import {resources,topics,articles} from '../../data/portal';
 export function getStaticPaths(){return resources.map(resource=>({params:{section:resource.slug},props:{resource}}));}
 const {resource}=Astro.props;
+const slugs=['csharp','wpf','plc','network','architecture','database'];
 ---
 <Portal title={resource.title+' | EVAN DEVELOPERS'}><div class="portal-wrap portal-inner-page"><a href="/">Developer Center</a> / {resource.title}<h1>{resource.title}</h1><p>{resource.description}</p>
-{resource.slug==='docs' ? <div class="portal-grid">{topics.map((t,i)=><article class="portal-card" id={'topic-'+i}><span class="portal-symbol">{t.icon}</span><h3>{t.title}</h3><p>{t.description}</p><small>상세 문서 준비 중</small></article>)}</div> : resource.slug==='blog' ? <div>{articles.map(a=><a class="portal-entry" href={a.href}><h3>{a.title} →</h3><p>{a.description}</p></a>)}</div> : <div class="portal-card"><h2>준비 중</h2><p>이 영역은 후속 개발 단계에서 콘텐츠와 기능을 추가할 예정입니다.</p><a href="/portal/docs/">기술 분야 탐색 →</a></div>}
+{resource.slug==='docs' ? <div class="portal-grid">{topics.map((t,i)=><a class="portal-card" id={'topic-'+i} href={'/portal/docs/'+slugs[i]+'/'}><span class="portal-symbol">{t.icon}</span><h3>{t.title}</h3><p>{t.description}</p><span class="portal-more">Read guide →</span></a>)}</div> : resource.slug==='blog' ? <div>{articles.map(a=><a class="portal-entry" href={a.href}><h3>{a.title} →</h3><p>{a.description}</p></a>)}</div> : <div class="portal-card"><h2>준비 중</h2><p>이 영역은 후속 개발 단계에서 콘텐츠와 기능을 추가할 예정입니다.</p><a href="/portal/docs/">기술 분야 탐색 →</a></div>}
 </div></Portal>

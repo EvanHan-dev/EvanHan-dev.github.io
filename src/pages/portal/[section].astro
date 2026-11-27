@@ -1,7 +1,7 @@
 ---
 import Portal from '../../layouts/Portal.astro';
 import {resources,topics,articles} from '../../data/portal';
-export function getStaticPaths(){return resources.map(resource=>({params:{section:resource.slug},props:{resource}}));}
+export function getStaticPaths(){return resources.filter(resource=>resource.slug!=='tools').map(resource=>({params:{section:resource.slug},props:{resource}}));}
 const {resource}=Astro.props;
 const slugs=['csharp','wpf','plc','network','architecture','database'];
 ---
